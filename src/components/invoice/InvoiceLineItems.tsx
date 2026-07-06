@@ -142,12 +142,12 @@ export function InvoiceLineItems({
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h3 className="text-base font-semibold text-(--foreground)">
           Services &amp; Extras
         </h3>
         {!readOnly && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {showServiceSelector ? (
               <div className="relative">
                 <select
@@ -199,24 +199,24 @@ export function InvoiceLineItems({
       </div>
 
       {/* Table */}
-      <div className="border border-(--border) rounded-xl overflow-hidden">
-        <table className="w-full">
+      <div className="border border-(--border) rounded-xl overflow-x-auto">
+        <table className="min-w-150 w-full">
           <thead>
             <tr className="bg-(--background) border-b border-(--border)">
-              <th className="text-left px-4 py-3 text-xs font-semibold text-(--text-muted) uppercase tracking-wider w-[45%]">
+              <th className="text-left px-2 sm:px-4 py-3 text-xs font-semibold text-(--text-muted) uppercase tracking-wider w-[45%]">
                 Description
               </th>
-              <th className="text-center px-4 py-3 text-xs font-semibold text-(--text-muted) uppercase tracking-wider w-[10%]">
+              <th className="text-center px-2 sm:px-4 py-3 text-xs font-semibold text-(--text-muted) uppercase tracking-wider w-[10%]">
                 Qty
               </th>
-              <th className="text-right px-4 py-3 text-xs font-semibold text-(--text-muted) uppercase tracking-wider w-[20%]">
+              <th className="text-right px-2 sm:px-4 py-3 text-xs font-semibold text-(--text-muted) uppercase tracking-wider w-[20%]">
                 Unit Price
               </th>
-              <th className="text-right px-4 py-3 text-xs font-semibold text-(--text-muted) uppercase tracking-wider w-[20%]">
+              <th className="text-right px-2 sm:px-4 py-3 text-xs font-semibold text-(--text-muted) uppercase tracking-wider w-[20%]">
                 Total
               </th>
               {!readOnly && (
-                <th className="text-center px-4 py-3 text-xs font-semibold text-(--text-muted) uppercase tracking-wider w-[5%]">
+                <th className="text-center px-2 sm:px-4 py-3 text-xs font-semibold text-(--text-muted) uppercase tracking-wider w-[5%]">
                   Action
                 </th>
               )}
@@ -229,7 +229,7 @@ export function InvoiceLineItems({
                 className="hover:bg-(--background) transition-colors"
               >
                 {/* Description */}
-                <td className="px-4 py-3">
+                <td className="px-2 sm:px-4 py-3">
                   {readOnly ? (
                     <div>
                       <span className="text-sm text-(--foreground)">
@@ -261,7 +261,7 @@ export function InvoiceLineItems({
                 </td>
 
                 {/* Quantity */}
-                <td className="px-4 py-3 text-center">
+                <td className="px-2 sm:px-4 py-3 text-center">
                   {readOnly ? (
                     <span className="text-sm text-(--foreground)">
                       {item.quantity}
@@ -284,7 +284,7 @@ export function InvoiceLineItems({
                 </td>
 
                 {/* Unit Price */}
-                <td className="px-4 py-3 text-right">
+                <td className="px-2 sm:px-4 py-3 text-right">
                   {readOnly ? (
                     <span className="text-sm text-(--foreground)">
                       {formatAmount(item.unitPrice)}
@@ -301,13 +301,13 @@ export function InvoiceLineItems({
                           parseInt(e.target.value) || 0
                         )
                       }
-                      className="w-28 text-right text-sm bg-transparent border border-transparent focus:border-(--border) rounded px-2 py-1 text-(--foreground) focus:outline-none focus:ring-1 focus:ring-(--accent)"
+                      className="w-20 sm:w-28 text-right text-sm bg-transparent border border-transparent focus:border-(--border) rounded px-2 py-1 text-(--foreground) focus:outline-none focus:ring-1 focus:ring-(--accent)"
                     />
                   )}
                 </td>
 
                 {/* Total */}
-                <td className="px-4 py-3 text-right">
+                <td className="px-2 sm:px-4 py-3 text-right">
                   <span className="text-sm font-medium text-(--foreground)">
                     {formatAmount(item.total)}
                   </span>
@@ -315,7 +315,7 @@ export function InvoiceLineItems({
 
                 {/* Actions */}
                 {!readOnly && (
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-2 sm:px-4 py-3 text-center">
                     <button
                       onClick={() => deleteItem(item.id)}
                       className="p-1.5 text-(--text-muted) hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
@@ -332,7 +332,7 @@ export function InvoiceLineItems({
               <tr>
                 <td
                   colSpan={readOnly ? 4 : 5}
-                  className="px-4 py-8 text-center text-sm text-(--text-muted)"
+                  className="px-2 sm:px-4 py-8 text-center text-sm text-(--text-muted)"
                 >
                   No items added. Click &quot;Add Service&quot; or &quot;Custom
                   Row&quot; to get started.
