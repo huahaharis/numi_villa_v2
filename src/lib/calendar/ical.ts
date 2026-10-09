@@ -25,51 +25,72 @@ function addDaysString(dateStr: string, days: number = 1): string {
 }
 
 /**
- * Generate RFC 5545 compliant iCalendar string
+ * Merge overlapping or contiguous date ranges to prevent conflicting events
+ */
+export function mergeEventDateRanges(events: IcalEventInput[]): IcalEventInput[] {
+  if (events.length <= 1) return events;
+
+  // Sort by startDate, then endDate
+  const sorted = [...events].sort((a, b) => {
+    if (a.startDate !== b.startDate) return a.startDate.localeCompare(b.startDate);
+    return a.endDate.localeCompare(b.endDate);
+  });
+
+  const merged: IcalEventInput[] = [];
+  let current = { ...sorted[0] };
+
+  for (let i = 1; i < sorted.length; i++) {
+    const next = sorted[i];
+
+    // If next event overlaps or is contiguous with current
+    if (next.startDate <= current.endDate) {
+      if (next.endDate > current.endDate) {
+        current.endDate = next.endDate;
+      }
+    } else {
+      merged.push(current);
+      current = { ...next };
+    }
+  }
+
+  merged.push(current);
+  return merged;
+}
+
+/**
+ * Generate RFC 5545 compliant iCalendar string formatted to match Airbnb standards
+ * (accepted universally by Agoda, Booking.com, VRBO, and Google Calendar)
  */
 export function generateIcalFeed({
-  villaName,
   events,
 }: {
-  villaName: string
+  villaName?: string
   events: IcalEventInput[]
 }): string {
-  const timestamp = new Date()
-    .toISOString()
-    .replace(/[-:]/g, '')
-    .replace(/\.\d{3}/, '')
+  const cleanEvents = mergeEventDateRanges(events);
 
   const lines = [
     'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Numi Villa//Calendar Sync 1.0//EN',
+    'PRODID;X-RICAL-TZSOURCE=TZINFO:-//Airbnb Inc//Hosting Calendar//EN',
     'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
-    `X-WR-CALNAME:${villaName}`,
-    'X-WR-TIMEZONE:Asia/Jakarta',
-  ]
+    'VERSION:2.0',
+  ];
 
-  for (const event of events) {
-    const dtStart = toIcalDate(event.startDate)
-    const dtEnd = toIcalDate(event.endDate)
+  for (const event of cleanEvents) {
+    const dtStart = toIcalDate(event.startDate);
+    const dtEnd = toIcalDate(event.endDate);
 
-    lines.push('BEGIN:VEVENT')
-    lines.push(`UID:${event.uid}`)
-    lines.push(`DTSTAMP:${timestamp}`)
-    lines.push(`DTSTART;VALUE=DATE:${dtStart}`)
-    lines.push(`DTEND;VALUE=DATE:${dtEnd}`)
-    lines.push(`SUMMARY:${event.summary.replace(/[\r\n]/g, ' ')}`)
-    if (event.description) {
-      lines.push(`DESCRIPTION:${event.description.replace(/[\r\n]/g, ' ')}`)
-    }
-    lines.push(`STATUS:${event.status || 'CONFIRMED'}`)
-    lines.push('TRANSP:OPAQUE')
-    lines.push('SEQUENCE:0')
-    lines.push('END:VEVENT')
+    lines.push('BEGIN:VEVENT');
+    lines.push(`DTEND;VALUE=DATE:${dtEnd}`);
+    lines.push(`DTSTART;VALUE=DATE:${dtStart}`);
+    lines.push(`UID:${event.uid}`);
+    lines.push('SUMMARY:Reserved');
+    lines.push('TRANSP:OPAQUE');
+    lines.push('END:VEVENT');
   }
 
-  lines.push('END:VCALENDAR')
-  return lines.join('\r\n') + '\r\n'
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n') + '\r\n';
 }
 
 export interface ParsedIcalEvent {

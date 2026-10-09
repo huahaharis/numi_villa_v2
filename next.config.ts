@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/calendar/ical/:path*",
+        destination: "/api/ical/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
