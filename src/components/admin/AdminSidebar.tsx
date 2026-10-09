@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
+  Calendar,
   CalendarDays,
   FileText,
   Package,
@@ -18,6 +19,7 @@ import {
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { label: 'Calendar', href: '/calendar', icon: Calendar },
   { label: 'Bookings', href: '/bookings', icon: CalendarDays },
   { label: 'Invoices', href: '/invoices', icon: FileText },
   { label: 'Inventory', href: '/inventory', icon: Package },

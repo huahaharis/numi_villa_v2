@@ -61,7 +61,7 @@ const activities: ActivityItem[] = [
     id: '2',
     type: 'checkin',
     title: 'Guest Check-in',
-    description: 'Dewi Kartika checked in to Numi Villa Lembang',
+    description: 'Dewi Kartika checked in to Numi Villa Pangandaran',
     timestamp: '1 hour ago',
   },
   {

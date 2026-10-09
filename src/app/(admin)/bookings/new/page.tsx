@@ -27,25 +27,11 @@ const villas = [
     price: 120,
     image: null,
   },
-  {
-    id: 'v2',
-    name: 'Numi Villa Lembang',
-    location: 'Lembang, West Java',
-    price: 150,
-    image: null,
-  },
-  {
-    id: 'v3',
-    name: 'Numi Villa Bali',
-    location: 'Ubud, Bali',
-    price: 200,
-    image: null,
-  },
 ]
 
 export default function NewBookingPage() {
   const [step, setStep] = useState<Step>(1)
-  const [selectedVilla, setSelectedVilla] = useState<string>('')
+  const [selectedVilla, setSelectedVilla] = useState<string>('v1')
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
   const [adults, setAdults] = useState(2)

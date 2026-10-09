@@ -17,7 +17,7 @@ interface BookingFiltersProps {
 
 const statusOptions = ['All', 'CONFIRMED', 'PENDING', 'CHECKED OUT', 'CANCELLED']
 const dateRangeOptions = ['All Time', 'Today', 'This Week', 'This Month', 'Last Month']
-const villaOptions = ['All Villas', 'Numi Villa Pangandaran', 'Numi Villa Lembang', 'Numi Villa Bali']
+const villaOptions = ['All Villas', 'Numi Villa Pangandaran']
 
 export function BookingFilters({ filters, onFilterChange }: BookingFiltersProps) {
   const [statusOpen, setStatusOpen] = useState(false)

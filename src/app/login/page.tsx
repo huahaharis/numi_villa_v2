@@ -1,17 +1,26 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
-import { Lock, Mail, ArrowRight } from 'lucide-react'
+import { Lock, Mail, ArrowRight, AlertCircle, ShieldCheck } from 'lucide-react'
 import { Toaster, toast } from 'sonner'
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const { signIn } = useAuth()
+  const { signIn, signOut } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const isExpired = searchParams.get('reason') === 'expired'
+
+  useEffect(() => {
+    if (isExpired) {
+      // Clean up any lingering local session state
+      signOut()
+    }
+  }, [isExpired, signOut])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -48,9 +57,22 @@ export default function LoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="bg-[#232019] rounded-2xl border border-white/10 p-8">
+        <div className="bg-[#232019] rounded-2xl border border-white/10 p-8 shadow-2xl">
           <h2 className="text-white text-xl font-semibold text-center mb-2">Admin Portal</h2>
-          <p className="text-white/40 text-sm text-center mb-8">Access authorized management tools</p>
+          <p className="text-white/40 text-sm text-center mb-6">Access authorized management tools</p>
+
+          {/* Session Expired Banner */}
+          {isExpired && (
+            <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-200 text-xs flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-amber-300">Session Expired</p>
+                <p className="text-white/60 text-[11px] mt-0.5 leading-relaxed">
+                  Your daily login token has expired. Please sign in again to continue managing Numi Villa.
+                </p>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
@@ -89,23 +111,17 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Remember me */}
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="remember"
-                className="w-4 h-4 rounded border-white/20 bg-white/5 text-white accent-white"
-              />
-              <label htmlFor="remember" className="text-white/40 text-sm">
-                Keep me signed in
-              </label>
+            {/* Session Expiry Indicator */}
+            <div className="flex items-center gap-2 text-white/40 text-xs py-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span>Session active for today · Auto-expires next day</span>
             </div>
 
             {/* Submit */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-white text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-white text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md cursor-pointer"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
@@ -120,7 +136,10 @@ export default function LoginPage() {
 
           {/* Forgot password */}
           <p className="text-center mt-6">
-            <a href="#" className="text-white/30 text-sm hover:text-white/60 transition-colors underline underline-offset-4">
+            <a
+              href="mailto:support@numivilla.my.id?subject=Password%20Reset%20Request"
+              className="text-white/30 text-xs hover:text-white/60 transition-colors underline underline-offset-4"
+            >
               forgot access credentials?
             </a>
           </p>
@@ -132,5 +151,22 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          className="min-h-screen flex items-center justify-center"
+          style={{ background: '#1a1714' }}
+        >
+          <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   )
 }

@@ -673,13 +673,8 @@ $$ LANGUAGE plpgsql;
 -- ============================================================
 
 INSERT INTO villas (name, slug, description, tagline, location, address, bedrooms, bathrooms, max_guests, property_type, base_rate_per_night, currency, amenities, features, status) VALUES
-('Numi Villa Pangandaran', 'numi-villa-pangandaran', 'Exclusive beachfront property with minimalist architectural design and private infinity pool.', 'Luxury 4-Bedroom Beachfront Villa with Private Pool and Butler Service.', 'Pangandaran, West Java', 'Jl. Pantai Batu Karas, Pangandaran, West Java, Indonesia', 4, 4, 8, 'villa', 12500000, 'IDR', ARRAY['Private Pool', 'Ocean View', 'Butler Service', 'WiFi', 'Air Conditioning', 'Smart TV', 'Kitchen', 'Parking'], ARRAY['Beachfront', 'Infinity Pool', 'Minimalist Design'], 'active'),
+('Numi Villa Pangandaran', 'numi-villa-pangandaran', 'Bayangkan pagi hari yang sempurna — secangkir kopi hangat di tepi kolam renang privat, hembusan angin sepoi dari pantai Pangandaran, dan ketenangan yang jarang bisa kamu temukan di tempat lain.', 'Villa modern minimalis dengan kolam renang privat di Pangandaran, Jawa Barat', 'Pangandaran, West Java', 'Cluster Kaliandra, Pananjung, Kec. Pangandaran, Kab. Pangandaran, Jawa Barat 46396', 2, 2, 4, 'villa', 1000000, 'IDR', ARRAY['Private Pool', 'Living Room', 'Full Kitchen', 'Air Conditioning', 'WiFi', 'Parking'], ARRAY['Private Pool', 'Minimalist Design'], 'active');
 
-('The Azure Suite', 'the-azure-suite', 'Elegant ocean-view suite with contemporary furnishings and private terrace.', 'Boutique Suite with Panoramic Ocean Views', 'Pangandaran, West Java', 'Jl. Raya Pangandaran KM 3, West Java, Indonesia', 2, 2, 4, 'suite', 4500000, 'IDR', ARRAY['Ocean View', 'Private Terrace', 'WiFi', 'Air Conditioning', 'Smart TV', 'Mini Bar'], ARRAY['Panoramic View', 'Contemporary Design'], 'active'),
-
-('Zen Garden Villa', 'zen-garden-villa', 'Tranquil villa surrounded by lush tropical gardens with open-air living spaces.', 'Tropical Garden Retreat with Open-Air Living', 'Pangandaran, West Java', 'Jl. Gardenia Resort, Pangandaran, West Java, Indonesia', 3, 3, 6, 'villa', 8500000, 'IDR', ARRAY['Garden View', 'Outdoor Shower', 'WiFi', 'Air Conditioning', 'Kitchen', 'BBQ Area'], ARRAY['Tropical Garden', 'Open-Air Living', 'Zen Design'], 'active'),
-
-('Obsidian Ridge', 'obsidian-ridge', 'Modern cliffside villa with dramatic black stone architecture and sunset views.', 'Cliffside Villa with Dramatic Sunset Views', 'Pangandaran, West Java', 'Jl. Bukit Batu Karas, Pangandaran, West Java, Indonesia', 5, 5, 10, 'villa', 18000000, 'IDR', ARRAY['Cliff View', 'Sunset Deck', 'Private Pool', 'WiFi', 'Air Conditioning', 'Smart Home', 'Chef Kitchen', 'Home Theater'], ARRAY['Cliffside', 'Modern Architecture', 'Sunset Views'], 'active');
 
 
 -- ============================================================

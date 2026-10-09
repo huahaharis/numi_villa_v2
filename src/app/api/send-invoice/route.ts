@@ -109,8 +109,9 @@ export async function POST(request: Request) {
 
     if (error) return NextResponse.json({ error }, { status: 500 });
     return NextResponse.json({ success: true, id: emailData?.id });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Failed to send invoice email:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Failed to send invoice email";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

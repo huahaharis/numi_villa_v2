@@ -79,14 +79,16 @@ export function DatePicker({
     return new Date();
   });
   const [selectedDate, setSelectedDate] = useState(value);
+  const [prevValue, setPrevValue] = useState(value);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  if (value !== prevValue) {
+    setPrevValue(value);
     setSelectedDate(value);
     if (value) {
       setViewDate(parseLocalDate(value));
     }
-  }, [value]);
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

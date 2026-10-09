@@ -22,7 +22,7 @@ const allBookings: BookingRow[] = [
   {
     id: 'B-1044',
     guestName: 'Dewi Kartika',
-    villaName: 'Numi Villa Lembang',
+    villaName: 'Numi Villa Pangandaran',
     checkIn: 'Jan 14, 2026',
     checkOut: 'Jan 16, 2026',
     status: 'CHECKED OUT',
@@ -40,7 +40,7 @@ const allBookings: BookingRow[] = [
   {
     id: 'B-1042',
     guestName: 'Ahmad Fauzi',
-    villaName: 'Numi Villa Bali',
+    villaName: 'Numi Villa Pangandaran',
     checkIn: 'Jan 10, 2026',
     checkOut: 'Jan 15, 2026',
     status: 'CANCELLED',
@@ -58,7 +58,7 @@ const allBookings: BookingRow[] = [
   {
     id: 'B-1040',
     guestName: 'Hendra Wijaya',
-    villaName: 'Numi Villa Lembang',
+    villaName: 'Numi Villa Pangandaran',
     checkIn: 'Jan 5, 2026',
     checkOut: 'Jan 8, 2026',
     status: 'CONFIRMED',
@@ -76,7 +76,7 @@ const allBookings: BookingRow[] = [
   {
     id: 'B-1038',
     guestName: 'Rina Kartika',
-    villaName: 'Numi Villa Bali',
+    villaName: 'Numi Villa Pangandaran',
     checkIn: 'Jan 1, 2026',
     checkOut: 'Jan 4, 2026',
     status: 'CONFIRMED',
@@ -94,7 +94,7 @@ const allBookings: BookingRow[] = [
   {
     id: 'B-1036',
     guestName: 'Lisa Susanti',
-    villaName: 'Numi Villa Lembang',
+    villaName: 'Numi Villa Pangandaran',
     checkIn: 'Dec 25, 2025',
     checkOut: 'Dec 28, 2025',
     status: 'CONFIRMED',
