@@ -48,7 +48,7 @@ export const invoiceData: InvoiceData = {
   guestPhone: '+44 7700 900077',
   guestAddress: 'Kensington Gardens, London, UK',
 
-  villaName: 'The Sapphire Suite',
+  villaName: 'Numi Villa Pangandaran',
   nights: 5,
   checkIn: 'Aug 21, 2024',
   checkOut: 'Aug 26, 2024',
@@ -56,26 +56,26 @@ export const invoiceData: InvoiceData = {
   lineItems: [
     {
       id: '1',
-      description: 'Accommodation (Sapphire Suite)',
+      description: 'Accommodation (Numi Villa Pangandaran)',
       detail: 'Includes private pool, butler service, daily housekeeping',
       quantity: 5,
-      unitPrice: 1250.0,
-      amount: 6250.0,
+      unitPrice: 1250000.0,
+      amount: 6250000.0,
     },
   ],
 
-  subtotal: 7360.0,
+  subtotal: 7360000.0,
   serviceChargeRate: 10,
-  serviceCharge: 736.0,
+  serviceCharge: 736000.0,
   vatRate: 11,
-  vat: 809.1,
-  total: 8845.1,
-  currency: '$',
+  vat: 809100.0,
+  total: 8845100.0,
+  currency: 'IDR',
 
   bankName: 'Central Bank of Indonesia',
   accountName: 'PT Numi Villa Indonesia',
   accountNumber: '1234-5678-9012-3456',
-  branch: 'Denpasar Branch, Bali',
+  branch: 'Bandung, Jawa Barat',
 
   thankYouMessage:
     'It was a pleasure hosting you, Julian. We look forward to welcoming you back at Numi Villa.',

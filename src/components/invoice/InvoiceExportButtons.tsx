@@ -116,7 +116,7 @@ export function InvoiceExportButtons({
                           new Paragraph({
                             children: [
                               new TextRun({
-                                text: "Jalan Ibrahim No 88, Bali, Indonesia",
+                                text: "Cluster Kaliandra no A-105, Pangandaran, Jawa Barat",
                                 size: 18,
                                 color: COLORS.muted,
                               }),
@@ -125,7 +125,7 @@ export function InvoiceExportButtons({
                           new Paragraph({
                             children: [
                               new TextRun({
-                                text: "+62 361 123 4567",
+                                text: "+62 812 2188 2454",
                                 size: 18,
                                 color: COLORS.muted,
                               }),
@@ -134,7 +134,7 @@ export function InvoiceExportButtons({
                           new Paragraph({
                             children: [
                               new TextRun({
-                                text: "reservations@numivilla.com",
+                                text: "www.numivilla.my.id",
                                 size: 18,
                                 color: COLORS.muted,
                               }),
@@ -695,7 +695,7 @@ export function InvoiceExportButtons({
                 alignment: AlignmentType.CENTER,
                 children: [
                   new TextRun({
-                    text: "Numi Villa · Jalan Ibrahim No 88 · Bali, Indonesia · www.numivilla.com",
+                    text: "Numi Villa · Cluster Kaliandra no A-105 · Pangandaran, Jawa Barat · www.numivilla.my.id",
                     size: 16,
                     color: COLORS.muted,
                   }),

@@ -9,7 +9,8 @@ export async function POST(request: Request) {
       message: "PDF generation ready",
       invoiceId,
     });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "PDF generation failed";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

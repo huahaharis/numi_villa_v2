@@ -248,3 +248,52 @@ export interface DashboardStats {
   lowStockItems: number
   recentActivity: ActivityLog[]
 }
+
+// ────────────────────────────────────────────────
+//  Calendar & Channel Sync Types
+// ────────────────────────────────────────────────
+
+export type ChannelName = 'airbnb' | 'agoda' | 'booking_com' | 'tiket_com' | 'all' | 'direct'
+
+export interface CalendarBlock {
+  id: string
+  villaId: string
+  startDate: string
+  endDate: string
+  reason: string
+  targetChannels: string[]
+  createdBy?: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ChannelConnection {
+  id: string
+  villaId: string
+  channelName: string
+  inboundUrl: string | null
+  isActive: boolean
+  lastSyncedAt: string | null
+  syncStatus: 'idle' | 'syncing' | 'success' | 'error'
+  syncError: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type CalendarEventType = 'booking' | 'block'
+
+export interface CalendarEvent {
+  id: string
+  type: CalendarEventType
+  title: string
+  startDate: string
+  endDate: string
+  source: 'direct' | 'airbnb' | 'agoda' | 'booking_com' | 'tiket_com' | 'block' | 'other'
+  targetChannels?: string[]
+  guestName?: string
+  bookingCode?: string
+  status?: string
+  totalAmount?: number
+  reason?: string
+  rawId: string
+}
