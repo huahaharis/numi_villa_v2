@@ -108,13 +108,13 @@ export function ChannelSyncDrawer({
   const getFeedUrl = (channelFile: string) => {
     const base = (productionUrl || DEFAULT_LIVE_DOMAIN).trim().replace(/\/+$/, "");
     const slug = villa.slug || "numi-villa-pangandaran";
-    return `${base}/api/ical/${slug}/${channelFile}`;
+    return `${base}/calendar/ical/${slug}/${channelFile}?t=dde2becd1f27446890f14ef50b64628a`;
   };
 
   const getMasterFeedUrl = () => {
     const base = (productionUrl || DEFAULT_LIVE_DOMAIN).trim().replace(/\/+$/, "");
     const slug = villa.slug || "numi-villa-pangandaran";
-    return `${base}/api/ical/${slug}.ics`;
+    return `${base}/calendar/ical/${slug}.ics?t=dde2becd1f27446890f14ef50b64628a`;
   };
 
   const handleUpdateDomain = (newUrl: string) => {
