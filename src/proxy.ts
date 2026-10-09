@@ -4,13 +4,16 @@ import { updateSession } from './lib/supabase/middleware'
 export async function proxy(request: NextRequest) {
   const { supabaseResponse, user, isExpired } = await updateSession(request)
 
+  const isCalendarFeed = request.nextUrl.pathname.startsWith('/calendar/ical')
+
   const isAdminRoute =
-    request.nextUrl.pathname.startsWith('/dashboard') ||
-    request.nextUrl.pathname.startsWith('/calendar') ||
-    request.nextUrl.pathname.startsWith('/bookings') ||
-    request.nextUrl.pathname.startsWith('/invoices') ||
-    request.nextUrl.pathname.startsWith('/inventory') ||
-    request.nextUrl.pathname.startsWith('/settings')
+    !isCalendarFeed &&
+    (request.nextUrl.pathname.startsWith('/dashboard') ||
+      request.nextUrl.pathname.startsWith('/calendar') ||
+      request.nextUrl.pathname.startsWith('/bookings') ||
+      request.nextUrl.pathname.startsWith('/invoices') ||
+      request.nextUrl.pathname.startsWith('/inventory') ||
+      request.nextUrl.pathname.startsWith('/settings'))
 
   // Protect admin routes
   if (isAdminRoute) {
