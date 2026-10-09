@@ -68,10 +68,14 @@ export function generateIcalFeed({
   events: IcalEventInput[]
 }): string {
   const cleanEvents = mergeEventDateRanges(events);
+  const timestamp = new Date()
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '');
 
   const lines = [
     'BEGIN:VCALENDAR',
-    'PRODID;X-RICAL-TZSOURCE=TZINFO:-//Airbnb Inc//Hosting Calendar//EN',
+    'PRODID:-//Airbnb Inc//Hosting Calendar 1.0//EN',
     'CALSCALE:GREGORIAN',
     'VERSION:2.0',
   ];
@@ -79,13 +83,14 @@ export function generateIcalFeed({
   for (const event of cleanEvents) {
     const dtStart = toIcalDate(event.startDate);
     const dtEnd = toIcalDate(event.endDate);
+    const uidClean = (event.uid.includes('@') ? event.uid.split('@')[0] : event.uid).replace(/[^a-zA-Z0-9_-]/g, '');
 
     lines.push('BEGIN:VEVENT');
-    lines.push(`DTEND;VALUE=DATE:${dtEnd}`);
+    lines.push(`DTSTAMP:${timestamp}`);
     lines.push(`DTSTART;VALUE=DATE:${dtStart}`);
-    lines.push(`UID:${event.uid}`);
-    lines.push('SUMMARY:Reserved');
-    lines.push('TRANSP:OPAQUE');
+    lines.push(`DTEND;VALUE=DATE:${dtEnd}`);
+    lines.push('SUMMARY:Airbnb (Not available)');
+    lines.push(`UID:${uidClean}@airbnb.com`);
     lines.push('END:VEVENT');
   }
 
