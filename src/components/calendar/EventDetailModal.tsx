@@ -8,6 +8,8 @@ import { deleteCalendarBlock } from "@/lib/calendar/actions";
 import { formatDate, formatCurrency, calculateNights } from "@/lib/utils/formatters";
 import type { CalendarEvent } from "@/types/database";
 
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+
 interface EventDetailModalProps {
   event: CalendarEvent | null;
   onClose: () => void;
@@ -29,6 +31,7 @@ export function EventDetailModal({
   onSuccess,
 }: EventDetailModalProps) {
   const [isPending, startTransition] = useTransition();
+  const [showConfirmUnblock, setShowConfirmUnblock] = React.useState(false);
 
   if (!event) return null;
 
@@ -40,14 +43,11 @@ export function EventDetailModal({
     text: "text-gray-800",
   };
 
-  const handleDeleteBlock = () => {
-    if (!confirm("Are you sure you want to remove this block and reopen availability?")) {
-      return;
-    }
-
+  const handleConfirmDelete = () => {
     startTransition(async () => {
       try {
         await deleteCalendarBlock(event.rawId);
+        setShowConfirmUnblock(false);
         onSuccess?.();
         onClose();
       } catch (err) {
@@ -164,9 +164,10 @@ export function EventDetailModal({
           <div className="px-4 sm:px-6 py-3.5 sm:py-4 bg-(--background)/50 border-t border-(--border) flex items-center justify-between">
             {isBlock ? (
               <button
-                onClick={handleDeleteBlock}
+                type="button"
+                onClick={() => setShowConfirmUnblock(true)}
                 disabled={isPending}
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl transition-colors disabled:opacity-50"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors disabled:opacity-50"
               >
                 {isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -190,6 +191,19 @@ export function EventDetailModal({
             )}
           </div>
         </motion.div>
+
+        {/* Custom Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showConfirmUnblock}
+          onClose={() => setShowConfirmUnblock(false)}
+          onConfirm={handleConfirmDelete}
+          title="Remove Calendar Block?"
+          description={`Are you sure you want to unblock ${formatDate(event.startDate)} to ${formatDate(event.endDate)}? This will remove restrictions and reopen availability for new bookings.`}
+          confirmText="Yes, Unblock Dates"
+          cancelText="Keep Blocked"
+          variant="danger"
+          isLoading={isPending}
+        />
       </div>
     </AnimatePresence>
   );
