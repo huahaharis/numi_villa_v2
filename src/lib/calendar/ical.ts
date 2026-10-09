@@ -14,6 +14,16 @@ function toIcalDate(dateStr: string): string {
   return dateStr.replace(/-/g, '')
 }
 
+function addDaysString(dateStr: string, days: number = 1): string {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  const dt = new Date(Date.UTC(y, m - 1, d))
+  dt.setUTCDate(dt.getUTCDate() + days)
+  const yStr = dt.getUTCFullYear()
+  const mStr = String(dt.getUTCMonth() + 1).padStart(2, '0')
+  const dStr = String(dt.getUTCDate()).padStart(2, '0')
+  return `${yStr}-${mStr}-${dStr}`
+}
+
 /**
  * Generate RFC 5545 compliant iCalendar string
  */
@@ -53,6 +63,8 @@ export function generateIcalFeed({
       lines.push(`DESCRIPTION:${event.description.replace(/[\r\n]/g, ' ')}`)
     }
     lines.push(`STATUS:${event.status || 'CONFIRMED'}`)
+    lines.push('TRANSP:OPAQUE')
+    lines.push('SEQUENCE:0')
     lines.push('END:VEVENT')
   }
 
@@ -109,11 +121,14 @@ export function parseIcalFeed(icsContent: string): ParsedIcalEvent[] {
     }
 
     if (line === 'END:VEVENT') {
-      if (currentEvent.uid && currentEvent.startDate && currentEvent.endDate) {
+      if (currentEvent.startDate) {
+        // If DTEND is missing, fallback to next day
+        const endDate = currentEvent.endDate || addDaysString(currentEvent.startDate, 1)
+        const uid = currentEvent.uid || `event-${currentEvent.startDate}-${endDate}-${Math.random().toString(36).slice(2, 8)}`
         events.push({
-          uid: currentEvent.uid,
+          uid,
           startDate: currentEvent.startDate,
-          endDate: currentEvent.endDate,
+          endDate,
           summary: currentEvent.summary || 'Reserved',
           description: currentEvent.description,
         })

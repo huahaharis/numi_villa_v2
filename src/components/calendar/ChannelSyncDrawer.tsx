@@ -30,7 +30,7 @@ const CHANNELS_CONFIG = [
   {
     id: "airbnb",
     name: "Airbnb",
-    tag: "channel=airbnb",
+    channelFile: "airbnb.ics",
     color: "#ff385c",
     outboundHelp: "Airbnb Host > Listings > Availability settings > Connect calendars > Import calendar",
     inboundHelp: "Airbnb Host > Listings > Availability settings > Connect calendars > Export calendar",
@@ -38,7 +38,7 @@ const CHANNELS_CONFIG = [
   {
     id: "agoda",
     name: "Agoda",
-    tag: "channel=agoda",
+    channelFile: "agoda.ics",
     color: "#00a651",
     outboundHelp: "Agoda Homes / YCS > Calendar > Calendar Sync > Import calendar",
     inboundHelp: "Agoda Homes / YCS > Calendar > Calendar Sync > Export calendar",
@@ -46,7 +46,7 @@ const CHANNELS_CONFIG = [
   {
     id: "booking_com",
     name: "Booking.com",
-    tag: "channel=booking_com",
+    channelFile: "booking_com.ics",
     color: "#003580",
     outboundHelp: "Booking Extranet > Rates & Availability > Sync calendars > Import calendar",
     inboundHelp: "Booking Extranet > Rates & Availability > Sync calendars > Export calendar",
@@ -54,7 +54,7 @@ const CHANNELS_CONFIG = [
   {
     id: "tiket_com",
     name: "Tiket.com",
-    tag: "channel=tiket_com",
+    channelFile: "tiket_com.ics",
     color: "#0064d2",
     outboundHelp: "Tiket Extranet > Calendar > Calendar Sync > Import iCal",
     inboundHelp: "Tiket Extranet > Calendar > Calendar Sync > Export iCal",
@@ -105,9 +105,16 @@ export function ChannelSyncDrawer({
     (ch) => Boolean(urls[ch.id]?.trim()) || Boolean(connections.find((c) => c.channelName === ch.id)?.inboundUrl)
   ).length;
 
-  const getFeedUrl = (tag: string) => {
+  const getFeedUrl = (channelFile: string) => {
     const base = (productionUrl || DEFAULT_LIVE_DOMAIN).trim().replace(/\/+$/, "");
-    return `${base}/api/ical/${villa.slug || villa.id}?${tag}`;
+    const slug = villa.slug || "numi-villa-pangandaran";
+    return `${base}/api/ical/${slug}/${channelFile}`;
+  };
+
+  const getMasterFeedUrl = () => {
+    const base = (productionUrl || DEFAULT_LIVE_DOMAIN).trim().replace(/\/+$/, "");
+    const slug = villa.slug || "numi-villa-pangandaran";
+    return `${base}/api/ical/${slug}.ics`;
   };
 
   const handleUpdateDomain = (newUrl: string) => {
@@ -319,7 +326,7 @@ export function ChannelSyncDrawer({
 
                 {/* Dedicated Feeds */}
                 {CHANNELS_CONFIG.map((ch) => {
-                  const feedUrl = getFeedUrl(ch.tag);
+                  const feedUrl = getFeedUrl(ch.channelFile);
                   const isCopied = copiedKey === ch.id;
 
                   return (
@@ -383,11 +390,11 @@ export function ChannelSyncDrawer({
                     <input
                       type="text"
                       readOnly
-                      value={getFeedUrl("channel=all")}
+                      value={getMasterFeedUrl()}
                       className="w-full text-xs font-mono bg-(--background) px-3 py-2 rounded-lg border border-(--border) text-(--foreground) select-all"
                     />
                     <button
-                      onClick={() => handleCopy("all", getFeedUrl("channel=all"))}
+                      onClick={() => handleCopy("all", getMasterFeedUrl())}
                       className="p-2 border border-(--border) rounded-lg hover:bg-(--background) text-(--foreground) transition-colors shrink-0"
                       title="Copy Link"
                     >
