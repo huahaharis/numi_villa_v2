@@ -127,15 +127,33 @@ export async function syncChannelFeeds(villaId: string): Promise<{
       // 2. Upsert guest if needed or create booking records
       // For each event, we check if booking exists with this booking_code
       for (const ev of events) {
-        const bookingCode = `OTA-${conn.channel_name.toUpperCase().slice(0, 3)}-${ev.uid.slice(-8)}`;
+        // Clean UID: take the prefix before @ domain to prevent collisions on "@booking.com", "@airbnb.com", etc.
+        const uidPart = ev.uid.includes("@") ? ev.uid.split("@")[0] : ev.uid;
+        const cleanUid = uidPart.replace(/[^a-zA-Z0-9_-]/g, "").slice(-12);
+        // Include start & end date digits to guarantee uniqueness across different reservations
+        const dateTag = `${ev.startDate.replace(/-/g, "").slice(4)}-${ev.endDate.replace(/-/g, "").slice(4)}`;
+        const bookingCode = `OTA-${conn.channel_name.toUpperCase().slice(0, 3)}-${cleanUid || "RES"}-${dateTag}`;
 
-        const { data: existing } = await supabase
+        // Check if booking already exists:
+        // 1. By exact booking_code
+        // 2. Or by same villa_id + source + check_in + check_out (not cancelled)
+        const { data: existingByCode } = await supabase
           .from("bookings")
           .select("id")
           .eq("booking_code", bookingCode)
           .maybeSingle();
 
-        if (!existing) {
+        const { data: existingByDates } = await supabase
+          .from("bookings")
+          .select("id")
+          .eq("villa_id", villaId)
+          .eq("source", conn.channel_name)
+          .eq("check_in", ev.startDate)
+          .eq("check_out", ev.endDate)
+          .neq("status", "cancelled")
+          .maybeSingle();
+
+        if (!existingByCode && !existingByDates) {
           // Create minimal booking placeholder
           // Need guest_id - find or create OTA Guest
           let otaGuestId: string | null = null;

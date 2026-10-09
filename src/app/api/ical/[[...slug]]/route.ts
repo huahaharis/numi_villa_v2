@@ -2,13 +2,52 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { generateIcalFeed, type IcalEventInput } from "@/lib/calendar/ical";
 
+const KNOWN_CHANNELS = new Set([
+  "airbnb",
+  "agoda",
+  "booking_com",
+  "booking.com",
+  "booking",
+  "tiket_com",
+  "tiket.com",
+  "tiket",
+  "direct",
+  "all",
+]);
+
+function normalizeChannel(raw: string): string {
+  const clean = raw.replace(/\.ics$/i, "").toLowerCase();
+  if (clean === "booking" || clean === "booking.com") return "booking_com";
+  if (clean === "tiket" || clean === "tiket.com") return "tiket_com";
+  return clean;
+}
+
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ villaSlug: string }> }
+  context: { params: Promise<{ slug?: string[] }> }
 ) {
-  const { villaSlug } = await context.params;
+  const { slug = [] } = await context.params;
   const searchParams = request.nextUrl.searchParams;
-  const channel = (searchParams.get("channel") || "all").toLowerCase();
+
+  let villaIdentifier = "";
+  let channel = (searchParams.get("channel") || "all").toLowerCase();
+
+  if (slug.length === 1) {
+    const singleSegment = slug[0];
+    const stripped = singleSegment.replace(/\.ics$/i, "").toLowerCase();
+
+    // If URL is /api/ical/agoda.ics or /api/ical/airbnb.ics, the segment is the channel
+    if (KNOWN_CHANNELS.has(stripped)) {
+      channel = normalizeChannel(stripped);
+      villaIdentifier = ""; // Will fallback to default villa
+    } else {
+      villaIdentifier = singleSegment.replace(/\.ics$/i, "");
+    }
+  } else if (slug.length >= 2) {
+    // Format: /api/ical/numi-villa-pangandaran/agoda.ics
+    villaIdentifier = slug[0].replace(/\.ics$/i, "");
+    channel = normalizeChannel(slug[1]);
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   // Prefer service role key for backend feeds if available to bypass RLS, fallback to anon key
@@ -21,29 +60,30 @@ export async function GET(
   });
 
   // 1. Find Villa by slug or id safely without Postgres UUID syntax errors
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(villaSlug);
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(villaIdentifier);
 
   let villa: { id: string; name: string; slug: string | null } | null = null;
 
   try {
-    if (isUuid) {
+    if (villaIdentifier && isUuid) {
       const { data } = await supabase
         .from("villas")
         .select("id, name, slug")
-        .eq("id", villaSlug)
+        .eq("id", villaIdentifier)
         .maybeSingle();
       villa = data;
     }
 
-    if (!villa) {
+    if (!villa && villaIdentifier) {
       const { data } = await supabase
         .from("villas")
         .select("id, name, slug")
-        .eq("slug", villaSlug)
+        .eq("slug", villaIdentifier)
         .maybeSingle();
       villa = data;
     }
 
+    // Fallback to default active villa (Numi Villa Pangandaran)
     if (!villa) {
       const { data: fallbackVilla } = await supabase
         .from("villas")
@@ -52,6 +92,16 @@ export async function GET(
         .limit(1)
         .maybeSingle();
       villa = fallbackVilla;
+    }
+
+    // Final fallback to any single villa in table
+    if (!villa) {
+      const { data: anyVilla } = await supabase
+        .from("villas")
+        .select("id, name, slug")
+        .limit(1)
+        .maybeSingle();
+      villa = anyVilla;
     }
   } catch (err) {
     console.error("Error looking up villa for iCal:", err);
@@ -129,12 +179,27 @@ export async function GET(
     events,
   });
 
+  const downloadFilename = channel && channel !== "all"
+    ? `${villa?.slug || "numi-villa"}-${channel}.ics`
+    : `${villa?.slug || "numi-villa"}.ics`;
+
   return new NextResponse(icsText, {
     status: 200,
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": `inline; filename="${villaSlug}.ics"`,
+      "Content-Disposition": `inline; filename="${downloadFilename}"`,
       "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
     },
+  });
+}
+
+export async function HEAD(
+  request: NextRequest,
+  context: { params: Promise<{ slug?: string[] }> }
+) {
+  const getResponse = await GET(request, context);
+  return new NextResponse(null, {
+    status: getResponse.status,
+    headers: getResponse.headers,
   });
 }
